@@ -13,7 +13,7 @@ bs = BS(webpage.read(), 'html.parser')
 
 work_url = 'https://www.pixiv.net/artworks/'
 rank_tbl = bs.find('div', {'class': 'ranking-items adjust'})
-for i, sec in enumerate(rank_tbl.find_all('section')):
+for sec in rank_tbl.find_all('section'):
     url = work_url+sec['data-id']
     print(sec['data-rank'], url)
     #print(sec)
