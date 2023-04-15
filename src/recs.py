@@ -6,8 +6,8 @@ from urllib.request import Request, urlopen
 # AI生成从31/10/2022开始
 # url = 'https://www.pixiv.net/ranking.php?mode=daily_ai'
 url = 'https://www.pixiv.net/ranking.php'
-headers={"User-Agent": "Mozilla/5.0"}
-request_site = Request(url, headers={"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"})
+headers={"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
+request_site = Request(url, headers=headers)
 webpage = urlopen(request_site)
 bs = BS(webpage.read(), 'html.parser')
 
