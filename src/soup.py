@@ -111,7 +111,6 @@ except Exception as e:
     dict_page['bookmarks'] = -1
     print(e)
 
-
 for k in dict_page.keys():
     print(k+':',dict_page[k])
-utils.sav2redis(page_id, dict_page)
+utils.sav2rd(page_id, dict_page)

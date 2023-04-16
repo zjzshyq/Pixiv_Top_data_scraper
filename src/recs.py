@@ -24,7 +24,7 @@ for sec in rank_tbl.find_all('section'):
     page_url = work_url + sec['data-id']
     img_url = sec.find('img', {'class': "_thumbnail ui-scroll-view"})['data-src']
     print(date, rank, page_url)
-    utils.download_cover(img_url, rank+'_'+pid, date)
+    utils.download_cover(img_url, pid, date)
     i +=1
     if(i>5):
         break

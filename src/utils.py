@@ -18,13 +18,19 @@ def download_cover(url, sub_name, date):
     else:
         print("Failed to load "+fname)
 
-def sav2redis(pid, page_dict):
+def sav2rd(pid, page_dict):
     rd = redis.Redis(host='localhost', port=6379, db=0)
     dict_drop_none = {}
     for k in page_dict:
         dict_drop_none[k] = '' if page_dict[k] is None else page_dict[k]
     rd.hmset(pid, dict_drop_none)
 
+def sav2csv():
+    1
+
+def rd2csv():
+    1
+
 
 if __name__=='__main__':
-    sav2redis('test', {'a':1,'b':2,})
+    sav2rd('test', {'a':1,'b':2,})
