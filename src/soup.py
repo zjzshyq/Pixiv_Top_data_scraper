@@ -39,7 +39,7 @@ except Exception as e:
     info = None
     print(e)
 
-dict_page['pid'] = str(page_id) # 也可从外层获取
+dict_page['pid'] = page_id # str类型，也可从外层获取
 dict_page['rank'] = None # 从外层获取
 dict_page['date'] = None # 外层获取
 

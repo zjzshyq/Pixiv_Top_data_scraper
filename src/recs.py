@@ -1,6 +1,8 @@
 # coding=utf-8
 from bs4 import BeautifulSoup as BS
 from urllib.request import Request, urlopen
+import re
+from utils import download_cover
 
 # yesterday 进入推荐页面需要 selenium
 # AI生成从31/10/2022开始
@@ -13,7 +15,16 @@ bs = BS(webpage.read(), 'html.parser')
 
 work_url = 'https://www.pixiv.net/artworks/'
 rank_tbl = bs.find('div', {'class': 'ranking-items adjust'})
+date = bs.find('a', {'class': 'current', 'href': re.compile('date=')}).text
+
+i = 0
 for sec in rank_tbl.find_all('section'):
-    url = work_url+sec['data-id']
-    print(sec['data-rank'], url)
-    #print(sec)
+    pid = sec['data-id']
+    rank = sec['data-rank']
+    page_url = work_url + sec['data-id']
+    img_url = sec.find('img', {'class': "_thumbnail ui-scroll-view"})['data-src']
+    print(date, rank, page_url)
+    download_cover(img_url, rank+'_'+pid, date)
+    i +=1
+    if(i>5):
+        break
