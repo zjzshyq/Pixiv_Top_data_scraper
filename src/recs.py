@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup as BS
 from urllib.request import Request, urlopen
 import re
-from utils import download_cover
+import utils
 
 # yesterday 进入推荐页面需要 selenium
 # AI生成从31/10/2022开始
@@ -24,7 +24,7 @@ for sec in rank_tbl.find_all('section'):
     page_url = work_url + sec['data-id']
     img_url = sec.find('img', {'class': "_thumbnail ui-scroll-view"})['data-src']
     print(date, rank, page_url)
-    download_cover(img_url, rank+'_'+pid, date)
+    utils.download_cover(img_url, rank+'_'+pid, date)
     i +=1
     if(i>5):
         break

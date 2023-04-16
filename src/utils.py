@@ -18,4 +18,10 @@ def download_cover(url, sub_name, date):
     else:
         print("Failed to load "+fname)
 
+def sav2redis(pid, page_dict):
+    rd = redis.Redis(host='localhost', port=6379, db=0)
+    rd.hmset(pid, page_dict)
 
+
+if __name__=='__main__':
+    sav2redis('test', {'a':1,'b':2,})
