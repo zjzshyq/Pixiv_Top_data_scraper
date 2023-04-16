@@ -20,7 +20,10 @@ def download_cover(url, sub_name, date):
 
 def sav2redis(pid, page_dict):
     rd = redis.Redis(host='localhost', port=6379, db=0)
-    rd.hmset(pid, page_dict)
+    dict_drop_none = {}
+    for k in page_dict:
+        dict_drop_none[k] = '' if page_dict[k] is None else page_dict[k]
+    rd.hmset(pid, dict_drop_none)
 
 
 if __name__=='__main__':

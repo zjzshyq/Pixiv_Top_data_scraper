@@ -20,58 +20,58 @@ page_id = url.split('/')[-1]
 try:
     js = json.loads(bs.find_all('meta')[-1]['content'])
 except Exception as e:
-    for n in name_lst_info+name_lst_illust:
-        dict_page[n] = 'NA'
-    js = 'NA'
+    js = None
     print(e)
+    exit(0) # return()
+
 try:
     illust = js['illust'][page_id]
 except Exception as e:
     for n in name_lst_info:
-        dict_page[n] = 'NA'
-    illust = 'NA'
+        dict_page[n] = ''
+    illust = None
     print(e)
 
 try:
     info = illust['userIllusts'][page_id]
 except Exception as e:
     for n in name_lst_illust:
-        dict_page[n] = 'NA'
-    info = 'NA'
+        dict_page[n] = -1
+    info = None
     print(e)
 
 dict_page['pid'] = page_id # str类型，也可从外层获取
-dict_page['rank'] = 'NA' # 从外层获取
-dict_page['date'] = 'NA' # 外层获取
+dict_page['rank'] = 0 # int类型，从外层获取
+dict_page['date'] = '' # 外层获取
 
 try:
     dict_page['title'] = info['title']
 except Exception as e:
-    dict_page['title'] = 'NA'
+    dict_page['title'] = ''
     print(e)
 
 try:
     dict_page['uid'] = str(info['userId'])
 except Exception as e:
-    dict_page['uid'] = 'NA'
+    dict_page['uid'] = ''
     print(e)
 
 try:
     dict_page['uname'] = info['userName']
 except Exception as e:
-    dict_page['uname'] = 'NA'
+    dict_page['uname'] = ''
     print(e)
 
 try:
-    dict_page['aiType'] = int(info['aiType'])  # 1非ai，2ai
+    dict_page['aiType'] = str(info['aiType'])  # 1非ai，2ai
 except Exception as e:
-    dict_page['aiType'] = 'NA'
+    dict_page['aiType'] = ''
     print(e)
 
 try:
     dict_page['tags'] = '/'.join(info['tags']) if info['tags'] is not None else ''
 except Exception as e:
-    dict_page['tags'] = 'NA'
+    dict_page['tags'] = ''
     print(e)
 
 try:
@@ -81,7 +81,7 @@ try:
         desc = desc.replace(s, '')
     dict_page['desc'] = desc
 except Exception as e:
-    dict_page['desc'] = 'NA'
+    dict_page['desc'] = ''
     print(e)
 
 # dict_page['update_date'] = info['updateDate']
@@ -90,25 +90,25 @@ except Exception as e:
 try:
     dict_page['views'] = int(illust['viewCount'])
 except Exception as e:
-    dict_page['views'] = 'NA'
+    dict_page['views'] = -1
     print(e)
 
 try:
     dict_page['comments'] = int(illust['commentCount'])
 except Exception as e:
-    dict_page['views'] = 'NA'
+    dict_page['views'] = -1
     print(e)
 
 try:
     dict_page['likes'] = int(illust['likeCount'])
 except Exception as e:
-    dict_page['likes'] = 'NA'
+    dict_page['likes'] = -1
     print(e)
 
 try:
     dict_page['bookmarks'] = int(illust['bookmarkCount'])
 except Exception as e:
-    dict_page['bookmarks'] = 'NA'
+    dict_page['bookmarks'] = -1
     print(e)
 
 
