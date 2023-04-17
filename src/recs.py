@@ -1,8 +1,7 @@
 # coding=utf-8
-from bs4 import BeautifulSoup as BS
+from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 import re
-import utils
 from soup import Page
 
 # yesterday 进入推荐页面需要 selenium
@@ -12,7 +11,7 @@ url = 'https://www.pixiv.net/ranking.php'
 headers={"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
 request_site = Request(url, headers=headers)
 webpage = urlopen(request_site)
-bs = BS(webpage.read(), 'html.parser')
+bs = BeautifulSoup(webpage.read(), 'html.parser')
 
 work_url = 'https://www.pixiv.net/artworks/'
 rank_tbl = bs.find('div', {'class': 'ranking-items adjust'})
@@ -25,12 +24,11 @@ for sec in rank_tbl.find_all('section'):
     page_url = work_url + sec['data-id']
     img_url = sec.find('img', {'class': "_thumbnail ui-scroll-view"})['data-src']
 
-    page = Page(page_url, date, rank)
+    page = Page(page_url, date, rank, img_url)
     page.parse(page.get_soup())
-    page.results()
-
-    utils.download_cover(img_url, pid, date)
+    page.results(False)
 
     i +=1
-    if i>3:
+    if i>=2:
         break
+

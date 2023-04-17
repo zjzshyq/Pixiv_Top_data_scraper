@@ -6,14 +6,14 @@ import re
 import utils
 
 class Page(object):
-    def __init__(self, page_url, date, rank):
+    def __init__(self, page_url, date, rank, img_url):
         self.url = page_url
         self.date = date
         self.rank = rank
         self.page_id = page_url.split('/')[-1]
-        self.dict_page = {'pid': self.page_id, 'date':date, 'rank':rank}
+        self.dict_page = {'pid': self.page_id, 'date':date, 'rank':rank, 'img':img_url}
 
-        self.name_lst_outside = ['pid', 'date', 'rank']
+        self.name_lst_outside = ['pid', 'date', 'rank', 'img']
         self.name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags', 'desc'] # all str
         self.name_lst_illust = ['views', 'comments', 'likes', 'bookmarks'] # all int
 
@@ -86,9 +86,6 @@ class Page(object):
             self.dict_page['desc'] = ''
             print(e)
 
-        # dict_page['update_date'] = info['updateDate']
-        # dict_page['create_date'] = info['createDate']
-
         try:
             self.dict_page['views'] = int(illust['viewCount'])
         except Exception as e:
@@ -113,15 +110,20 @@ class Page(object):
             self.dict_page['bookmarks'] = -1
             print(e)
 
-    def results(self):
+    def results(self, redis=True):
         print('\n----------------------------------------------------------------')
         print(self.dict_page['date'], self.dict_page['rank'], self.url)
         for k in self.dict_page.keys():
             print(k+':',self.dict_page[k])
-        utils.sav2rd(self.page_id, self.dict_page)
+        if redis:
+            utils.sav2rd(self.page_id, self.dict_page)
+
+    def get_name_lst(self):
+        return self.name_lst_outside + self.name_lst_info + self.name_lst_illust
+
 
 if __name__ == '__main__':
     url = 'https://www.pixiv.net/artworks/102345178'
-    page = Page(url, '2023-4-13', 1)
+    page = Page(url, '2023-4-13', 1, '')
     page.parse(page.get_soup())
     page.results()
