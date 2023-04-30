@@ -6,6 +6,12 @@ import json
 import re
 import time
 
+name_lst_outside = ['pid', 'date', 'rank', 'img']  # str
+name_lst_info = ['title', 'uid', 'uname', 'aiType',
+                 'tags', 'desc', 'create_time', 'update_time']  # all str
+name_lst_illust = ['views', 'comments', 'likes', 'bookmarks']  # all int
+name_lst = name_lst_outside + name_lst_info + name_lst_illust
+
 
 class Page(object):
     def __init__(self, page_url, date, rank, img_url):
@@ -15,12 +21,7 @@ class Page(object):
         self.page_id = page_url.split('/')[-1]
         self.dict_page = {'pid': self.page_id, 'date': date, 'rank': rank, 'img': img_url}
 
-        self.name_lst_outside = ['pid', 'date', 'rank', 'img']
-        self.name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags', 'desc']  # all str
-        self.name_lst_illust = ['views', 'comments', 'likes', 'bookmarks']  # all int
-
         self.dao = DAO()
-
         time.sleep(1)
 
     def get_soup(self):
@@ -39,7 +40,7 @@ class Page(object):
         try:
             illust = js['illust'][self.page_id]
         except Exception as e:
-            for n in self.name_lst_info:
+            for n in name_lst_info:
                 self.dict_page[n] = ''
             illust = None
             print(e)
@@ -47,7 +48,7 @@ class Page(object):
         try:
             info = illust['userIllusts'][self.page_id]
         except Exception as e:
-            for n in self.name_lst_illust:
+            for n in name_lst_illust:
                 self.dict_page[n] = -1
             info = None
             print(e)
@@ -68,6 +69,18 @@ class Page(object):
             self.dict_page['uname'] = info['userName']
         except Exception as e:
             self.dict_page['uname'] = ''
+            print(e)
+
+        try:
+            self.dict_page['create_time'] = info['createDate']
+        except Exception as e:
+            self.dict_page['create_time'] = ''
+            print(e)
+
+        try:
+            self.dict_page['update_time'] = info['updateDate']
+        except Exception as e:
+            self.dict_page['update_time'] = ''
             print(e)
 
         try:
@@ -117,26 +130,24 @@ class Page(object):
             print(e)
 
     def results(self, redis=False):
-        print('\n----------------------------------------------------------------')
         print('Date:', self.dict_page['date'],
               '\nRank:', self.dict_page['rank'],
               '\nURL:', self.url)
         for k in self.dict_page.keys():
             print(k+':', self.dict_page[k])
-        if redis:
-            # self.dao.info2rd(self.page_id, self.dict_page)
-            self.dao.img_queue_push(self.page_id,
-                                    self.dict_page['rank'],
-                                    self.dict_page['date'],
-                                    self.dict_page['img'])
-
-    def get_name_lst(self):
-        return self.name_lst_outside + self.name_lst_info + self.name_lst_illust
+        if self.dao.redis_server_flag:
+            if redis:
+                # self.dao.info2rd(self.page_id, self.dict_page)
+                self.dao.img_queue_push(self.page_id,
+                                        self.dict_page['rank'],
+                                        self.dict_page['date'],
+                                        self.dict_page['img'])
+        else:
+            print('can\'t push data in redis with disconnection')
 
 
 if __name__ == '__main__':
     url = 'https://www.pixiv.net/artworks/102345178'
-    page = Page(url, '2023-4-13', 1, '')
+    page = Page(url, '2022-10-31', 1, '')
     page.parse(page.get_soup())
-    page.results(True)
-
+    page.results(False)
