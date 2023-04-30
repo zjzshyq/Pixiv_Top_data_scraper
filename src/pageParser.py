@@ -1,9 +1,11 @@
 # coding=utf-8
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
+from dao import DAO
 import json
 import re
-import utils
+import time
+
 
 class Page(object):
     def __init__(self, page_url, date, rank, img_url):
@@ -11,14 +13,18 @@ class Page(object):
         self.date = date
         self.rank = rank
         self.page_id = page_url.split('/')[-1]
-        self.dict_page = {'pid': self.page_id, 'date':date, 'rank':rank, 'img':img_url}
+        self.dict_page = {'pid': self.page_id, 'date': date, 'rank': rank, 'img': img_url}
 
         self.name_lst_outside = ['pid', 'date', 'rank', 'img']
-        self.name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags', 'desc'] # all str
-        self.name_lst_illust = ['views', 'comments', 'likes', 'bookmarks'] # all int
+        self.name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags', 'desc']  # all str
+        self.name_lst_illust = ['views', 'comments', 'likes', 'bookmarks']  # all int
+
+        self.dao = DAO()
+
+        time.sleep(1)
 
     def get_soup(self):
-        headers={"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
+        headers = {"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
         request_site = Request(self.url, headers=headers)
         webpage = urlopen(request_site)
         return BeautifulSoup(webpage.read(), 'html.parser')
@@ -110,13 +116,19 @@ class Page(object):
             self.dict_page['bookmarks'] = -1
             print(e)
 
-    def results(self, redis=True):
+    def results(self, redis=False):
         print('\n----------------------------------------------------------------')
-        print(self.dict_page['date'], self.dict_page['rank'], self.url)
+        print('Date:', self.dict_page['date'],
+              '\nRank:', self.dict_page['rank'],
+              '\nURL:', self.url)
         for k in self.dict_page.keys():
-            print(k+':',self.dict_page[k])
+            print(k+':', self.dict_page[k])
         if redis:
-            utils.sav2rd(self.page_id, self.dict_page)
+            # self.dao.info2rd(self.page_id, self.dict_page)
+            self.dao.img_queue_push(self.page_id,
+                                    self.dict_page['rank'],
+                                    self.dict_page['date'],
+                                    self.dict_page['img'])
 
     def get_name_lst(self):
         return self.name_lst_outside + self.name_lst_info + self.name_lst_illust
@@ -126,4 +138,5 @@ if __name__ == '__main__':
     url = 'https://www.pixiv.net/artworks/102345178'
     page = Page(url, '2023-4-13', 1, '')
     page.parse(page.get_soup())
-    page.results()
+    page.results(True)
+
