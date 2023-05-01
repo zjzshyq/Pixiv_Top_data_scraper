@@ -2,13 +2,14 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from dao import DAO
+import datetime
+import pytz
 import json
 import re
-import time
 
-name_lst_outside = ['pid', 'date', 'rank', 'img']  # str
-name_lst_info = ['title', 'uid', 'uname', 'aiType',
-                 'tags', 'desc', 'create_time', 'update_time']  # all str
+name_lst_outside = ['pid', 'date', 'rank', 'img',  'crawl_time']  # str
+name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags',
+                 'desc', 'create_time', 'update_time']  # all str
 name_lst_illust = ['views', 'comments', 'likes', 'bookmarks']  # all int
 name_lst = name_lst_outside + name_lst_info + name_lst_illust
 
@@ -19,10 +20,18 @@ class Page(object):
         self.date = date
         self.rank = rank
         self.page_id = page_url.split('/')[-1]
-        self.dict_page = {'pid': self.page_id, 'date': date, 'rank': rank, 'img': img_url}
 
+        now = datetime.datetime.now()
+        tz = pytz.timezone('Asia/Tokyo')  # 转换为东京时区的时间
+        now_tz = tz.localize(now)
+        crawl_time_str = now_tz.strftime('%Y-%m-%dT%H:%M:%S%z')
+
+        self.dict_page = {'pid': self.page_id,
+                          'date': date,
+                          'rank': rank,
+                          'img': img_url,
+                          'crawl_time': crawl_time_str}
         self.dao = DAO()
-        # time.sleep(1)
 
     def get_soup(self):
         headers = {"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}

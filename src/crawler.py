@@ -62,7 +62,7 @@ def days_crawl(tops=50, ai_type=''):
     column_names = dict(map(lambda x: (x, []), name_lst))
     df = pd.DataFrame(column_names)
 
-    end_date = datetime.date(2023, 4, 29)
+    end_date = datetime.date(2022, 10, 31)
     delta = datetime.timedelta(days=1)
 
     df, date_rec = daily_tops('', df, tops,ai_type)
@@ -80,7 +80,7 @@ def days_crawl(tops=50, ai_type=''):
 
 
 if __name__ == '__main__':
-    days_crawl(tops=2)
+    days_crawl(tops=50)
     # daily_tops('20230426',
     #            pd.DataFrame(dict(map(lambda x: (x, []), name_lst))),
     #            tops=1, ai_type='_ai')

@@ -36,6 +36,7 @@ class DAO(object):
                 aiType VARCHAR(1),
                 tags TEXT,
                 desc TEXT,
+                crawl_time VARCHAR(25),
                 create_time VARCHAR(25),
                 update_time VARCHAR(25),
                 views INTEGER,
@@ -53,11 +54,11 @@ class DAO(object):
         sql = """
             INSERT OR IGNORE INTO pixiv_tops(
                 pid,date,rank,img,title,uid,uname,aiType,
-                tags,desc,create_time,update_time,
+                tags,desc,crawl_time,create_time,update_time,
                 views,comments,likes,bookmarks
             ) VALUES(
                 \'{pid}\',\'{date}\',\'{rank}\',\'{img}\',\'{title}\',\'{uid}\',\'{uname}\',\'{aiType}\',
-                \'{tags}\',\'{desc}\',\'{create_time}\',\'{update_time}\',
+                \'{tags}\',\'{desc}\',\'{crawl_time}\',\'{create_time}\',\'{update_time}\', 
                 {views},{comments},{likes},{bookmarks}
             )
         """.format(
@@ -71,6 +72,7 @@ class DAO(object):
             aiType=dict_page['aiType'],
             tags=dict_page['tags'],
             desc=dict_page['desc'],
+            crawl_time=dict_page['crawl_time'],
             create_time=dict_page['create_time'],
             update_time=dict_page['update_time'],
             views=dict_page['views'],
@@ -135,6 +137,7 @@ class DAO(object):
         except FileNotFoundError:
             print(FileNotFoundError)
             pre_df = None
+
         if pre_df is not None:
             df = pd.concat([pre_df, df], ignore_index=True)
         df.to_csv('../data/tops.csv', index=False, header=True)

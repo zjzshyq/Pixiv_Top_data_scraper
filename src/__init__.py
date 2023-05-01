@@ -1,6 +1,7 @@
 import sqlite3
 import os
 
+
 try:
     os.mkdir('../data')
     os.mkdir('../covers')
