@@ -2,8 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-cover/
-data_tmp/
+covers/
+data/
 
 # C extensions
 *.so
