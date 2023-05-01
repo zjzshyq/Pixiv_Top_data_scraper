@@ -5,6 +5,7 @@ from pageParser import Page, name_lst
 from dao import DAO
 import datetime
 import re
+import time
 import pandas as pd
 import warnings
 
@@ -37,7 +38,7 @@ def daily_tops(date, df, tops=0):
 
     i = 0
     for sec in rank_tbl.find_all('section'):
-        rank = sec['data-rank']
+        rank = str(sec['data-rank'])
         page_url = work_url + sec['data-id']
         img_url = sec.find('img', {'class': "_thumbnail ui-scroll-view"})['data-src']
 
@@ -72,13 +73,13 @@ def days_crawl():
 
     while url_date >= end_date:
         predate = url_date.strftime('%Y%m%d')
-        df, date_rec = daily_tops(predate, df,tops)
+        df, date_rec = daily_tops(predate, df, tops)
         url_date -= delta
+        time.sleep(1)
 
     DAO.sav2csv(df)
 
 
 if __name__ == '__main__':
     days_crawl()
-
     # daily_tops('20230426', 2)

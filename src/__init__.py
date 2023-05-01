@@ -4,8 +4,11 @@ import os
 try:
     os.mkdir('../data')
     os.mkdir('../covers')
-except Exception as e:
-    print(e)
+except FileExistsError:
+    print(FileExistsError)
 
 conn = sqlite3.connect(database='../data/pixiv.db')
-conn.close()
+cursor = conn.cursor()
+cursor.execute('SELECT SQLITE_VERSION()')
+data = cursor.fetchone()
+print("SQLite version:", data[0])

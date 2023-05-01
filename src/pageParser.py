@@ -129,21 +129,28 @@ class Page(object):
             self.dict_page['bookmarks'] = -1
             print(e)
 
-    def results(self, redis=False):
+    def results(self, db=False):
         print('Date:', self.dict_page['date'],
               '\nRank:', self.dict_page['rank'],
               '\nURL:', self.url)
         for k in self.dict_page.keys():
             print(k+':', self.dict_page[k])
         if self.dao.redis_server_flag:
-            if redis:
+            if db:
                 # self.dao.info2rd(self.page_id, self.dict_page)
                 self.dao.img_queue_push(self.page_id,
                                         self.dict_page['rank'],
                                         self.dict_page['date'],
                                         self.dict_page['img'])
+
         else:
             print('can\'t push data in redis with disconnection')
+        if self.dao.sqlite_server_flag:
+            if db:
+                self.dao.insert2sql(self.dict_page)
+            self.dao.sqlite.close()
+        else:
+            print('can\'t insert data in sqlite3')
 
 
 if __name__ == '__main__':

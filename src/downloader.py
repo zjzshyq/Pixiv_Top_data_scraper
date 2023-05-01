@@ -9,8 +9,8 @@ def download_cover(url, pic_name, rec_date):
     file_dir = os.path.join(fold_dir, pic_name)
     try:
         os.mkdir(fold_dir)
-    except:
-        1
+    except FileExistsError:
+        print(FileExistsError)
 
     img_response = requests.get(url, headers={'Referer': 'https://www.pixiv.net/'}, stream=True)
     if img_response.status_code == 200:
