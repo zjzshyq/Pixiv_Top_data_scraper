@@ -17,4 +17,3 @@ print("SQLite version:", data[0])
 
 crawl = Crawler(tops=50, is_ai=True)
 crawl.days_crawl()
-
