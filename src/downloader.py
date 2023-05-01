@@ -5,21 +5,24 @@ from dao import DAO
 
 def download_cover(url, pic_name, rec_date):
     pic_name = pic_name+'.jpg'
-    fold_dir = '../covers/'+rec_date
-    file_dir = os.path.join(fold_dir, pic_name)
+    year_date = rec_date[:-2]
+    fold_dir_month = os.path.join('../covers',year_date)
+    fold_dir_day = os.path.join(fold_dir_month, rec_date)
+    file_dir = os.path.join(fold_dir_day, pic_name)
     try:
-        os.mkdir(fold_dir)
+        os.mkdir(fold_dir_month)
+        os.mkdir(fold_dir_day)
     except FileExistsError:
-        return FileExistsError
+        print(rec_date, url)
 
     img_response = requests.get(url, headers={'Referer': 'https://www.pixiv.net/'}, stream=True)
     if img_response.status_code == 200:
         with open(file_dir, 'wb') as file:
             for chunk in img_response.iter_content(1024):
                 file.write(chunk)
-        return pic_name+" downloaded successfully."
+        print(pic_name+" downloaded successfully.")
     else:
-        return "Failed to load "+pic_name
+        print("Failed to load "+pic_name)
 
 
 if __name__ == '__main__':
@@ -36,5 +39,4 @@ if __name__ == '__main__':
         if splits == 5:
             flag = splits[4]
             pname = flag+'_'+pname
-        res = download_cover(img_url, pname, pdate)
-        print(res)
+        download_cover(img_url, pname, pdate)

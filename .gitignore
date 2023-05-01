@@ -6,6 +6,7 @@ covers/
 data/
 *.csv
 *.db
+*.jpg
 
 # C extensions
 *.so
