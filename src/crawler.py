@@ -22,7 +22,6 @@ class Crawler(object):
 
     def daily_tops(self, date):
         if date == '' or date is None:
-            date = datetime.date.today().strftime('%Y%m%d')
             if not self.is_ai:
                 url = 'https://www.pixiv.net/ranking.php'
             else:
@@ -46,6 +45,19 @@ class Crawler(object):
 
         print('\n----------------------------------------------------------------')
         print('current_date:', current_date, '\n')
+        if date == '' or date is None:
+            pattern = re.compile(r'(\d+)年(\d+)月(\d+)日')
+            match = pattern.search(current_date)
+            year = match.group(1)
+            if int(match.group(2)) < 10:
+                month = '0'+match.group(2)
+            else:
+                month = match.group(2)
+            if int(match.group(3)) < 10:
+                day = '0'+match.group(3)
+            else:
+                day = match.group(3)
+            date = year+month+day
 
         column_names = dict(map(lambda x: (x, []), name_lst))
         df = pd.DataFrame(column_names)
@@ -57,7 +69,7 @@ class Crawler(object):
 
             page = Page(page_url, date, rank, img_url)
             page.parse(page.get_soup())
-            page.results(True)
+            page.results(True, self.is_ai)
 
             with warnings.catch_warnings():
                 warnings.simplefilter(action='ignore', category=FutureWarning)

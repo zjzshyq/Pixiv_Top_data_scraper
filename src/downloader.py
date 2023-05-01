@@ -36,7 +36,7 @@ if __name__ == '__main__':
         pname = splits[1]+"_"+splits[0]
         pdate = splits[2]
         img_url = splits[3]
-        if splits == 5:
-            flag = splits[4]
-            pname = flag+'_'+pname
+        print(info_str)
+        if len(splits) == 5:
+            pname = splits[4]+'_'+pname
         download_cover(img_url, pname, pdate)
