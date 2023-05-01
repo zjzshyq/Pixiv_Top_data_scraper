@@ -22,7 +22,7 @@ class Page(object):
         self.dict_page = {'pid': self.page_id, 'date': date, 'rank': rank, 'img': img_url}
 
         self.dao = DAO()
-        time.sleep(1)
+        # time.sleep(1)
 
     def get_soup(self):
         headers = {"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}

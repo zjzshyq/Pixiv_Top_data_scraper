@@ -8,7 +8,7 @@ class DAO(object):
     def __init__(self, db=0):
         try:
             self.rd = redis.Redis(host='localhost', port=6379, db=db)
-            self.rd.set('opt_date', datetime.date.today())
+            self.rd.set('opt_date', str(datetime.date.today()))
             self.redis_server_flag = True
         except redis.exceptions.ConnectionError:
             self.rd = ''
@@ -130,6 +130,13 @@ class DAO(object):
     @staticmethod
     def sav2csv(df: pd.DataFrame):
         print(df.head())
+        try:
+            pre_df = pd.read_csv('../data/tops.csv')
+        except FileNotFoundError:
+            print(FileNotFoundError)
+            pre_df = None
+        if pre_df is not None:
+            df = pd.concat([pre_df, df], ignore_index=True)
         df.to_csv('../data/tops.csv', index=False, header=True)
 
 

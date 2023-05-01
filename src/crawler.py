@@ -10,15 +10,17 @@ import pandas as pd
 import warnings
 
 
-# yesterday 进入推荐页面需要 selenium
 # AI生成从31/10/2022开始
-# url = 'https://www.pixiv.net/ranking.php?mode=daily_ai'
-def daily_tops(date, df, tops=0):
+def daily_tops(date, df, tops=0, ai_type=''):
     if date == '' or date is None:
-        url = 'https://www.pixiv.net/ranking.php'
+        if ai_type == '':
+            url = 'https://www.pixiv.net/ranking.php'
+        else:
+            url = 'https://www.pixiv.net/ranking.php?mode=daily_ai'
         date = datetime.date.today().strftime('%Y%m%d')
     else:
-        url = 'https://www.pixiv.net/ranking.php?mode=daily&date=' + date
+        url = 'https://www.pixiv.net/ranking.php?mode=daily{ai_flag}&date={date}'\
+            .format(ai_flag=ai_type,date=date)
 
     header = {"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
     request_site = Request(url, headers=header)
@@ -56,15 +58,14 @@ def daily_tops(date, df, tops=0):
     return df, current_date
 
 
-def days_crawl():
-    tops = 2
+def days_crawl(tops=50, ai_type=''):
     column_names = dict(map(lambda x: (x, []), name_lst))
     df = pd.DataFrame(column_names)
 
-    end_date = datetime.date(2023, 4, 28)
+    end_date = datetime.date(2023, 4, 29)
     delta = datetime.timedelta(days=1)
 
-    df, date_rec = daily_tops('', df, tops)
+    df, date_rec = daily_tops('', df, tops,ai_type)
     pattern = re.compile(r'(\d+)年(\d+)月(\d+)日')
     match = pattern.search(date_rec)
     url_date = datetime.date(int(match.group(1)),
@@ -73,13 +74,13 @@ def days_crawl():
 
     while url_date >= end_date:
         predate = url_date.strftime('%Y%m%d')
-        df, date_rec = daily_tops(predate, df, tops)
+        df, date_rec = daily_tops(predate, df, tops, ai_type)
         url_date -= delta
-        time.sleep(1)
-
-    DAO.sav2csv(df)
+        DAO.sav2csv(df)
 
 
 if __name__ == '__main__':
-    days_crawl()
-    # daily_tops('20230426', 2)
+    days_crawl(tops=2)
+    # daily_tops('20230426',
+    #            pd.DataFrame(dict(map(lambda x: (x, []), name_lst))),
+    #            tops=1, ai_type='_ai')
