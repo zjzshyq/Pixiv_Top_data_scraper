@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 covers/
 data/
+*.csv
+*.db
 
 # C extensions
 *.so
