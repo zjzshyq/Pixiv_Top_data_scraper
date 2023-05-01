@@ -2,6 +2,7 @@ import redis
 import sqlite3
 import pandas as pd
 import datetime
+import os
 
 
 class DAO(object):
@@ -57,31 +58,32 @@ class DAO(object):
                 tags,desc,crawl_time,create_time,update_time,
                 views,comments,likes,bookmarks
             ) VALUES(
-                \'{pid}\',\'{date}\',\'{rank}\',\'{img}\',\'{title}\',\'{uid}\',\'{uname}\',\'{aiType}\',
-                \'{tags}\',\'{desc}\',\'{crawl_time}\',\'{create_time}\',\'{update_time}\', 
-                {views},{comments},{likes},{bookmarks}
+                ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
             )
-        """.format(
-            pid=dict_page['pid'],
-            date=dict_page['date'],
-            rank=dict_page['rank'],
-            img=dict_page['img'],
-            title=dict_page['title'],
-            uid=dict_page['uid'],
-            uname=dict_page['uname'],
-            aiType=dict_page['aiType'],
-            tags=dict_page['tags'],
-            desc=dict_page['desc'],
-            crawl_time=dict_page['crawl_time'],
-            create_time=dict_page['create_time'],
-            update_time=dict_page['update_time'],
-            views=dict_page['views'],
-            comments=dict_page['comments'],
-            likes=dict_page['likes'],
-            bookmarks=dict_page['bookmarks']
+        """
+
+        values = (
+            dict_page['pid'],
+            dict_page['date'],
+            dict_page['rank'],
+            dict_page['img'],
+            dict_page['title'],
+            dict_page['uid'],
+            dict_page['uname'],
+            dict_page['aiType'],
+            dict_page['tags'],
+            dict_page['desc'],
+            dict_page['crawl_time'],
+            dict_page['create_time'],
+            dict_page['update_time'],
+            dict_page['views'],
+            dict_page['comments'],
+            dict_page['likes'],
+            dict_page['bookmarks']
         )
         cursor = self.sqlite.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, values)
+
         self.sqlite.commit()
         if cursor.rowcount == 1:
             print("Insert successful!")
@@ -125,22 +127,18 @@ class DAO(object):
             if self.rd.llen(lname) > 0:
                 return self.rd.lpop(lname).decode('utf-8')
             else:
-                return 'End of Redis Queue.'
+                print('End of Redis Queue.')
+                return None
         else:
-            return 'redis is un-connected'
+            print('redis is un-connected')
+            return None
 
     @staticmethod
     def sav2csv(df: pd.DataFrame):
         print(df.head())
-        try:
-            pre_df = pd.read_csv('../data/tops.csv')
-        except FileNotFoundError:
-            print(FileNotFoundError)
-            pre_df = None
-
-        if pre_df is not None:
-            df = pd.concat([pre_df, df], ignore_index=True)
-        df.to_csv('../data/tops.csv', index=False, header=True)
+        csv_dir = '../data/tops.csv'
+        header_flag = not os.path.isfile(csv_dir)
+        df.to_csv(csv_dir, index=False, header=header_flag, mode='a')
 
 
 if __name__ == '__main__':

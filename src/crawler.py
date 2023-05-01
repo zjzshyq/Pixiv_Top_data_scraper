@@ -5,13 +5,12 @@ from pageParser import Page, name_lst
 from dao import DAO
 import datetime
 import re
-import time
 import pandas as pd
 import warnings
 
 
 # AI生成从31/10/2022开始
-def daily_tops(date, df, tops=0, ai_type=''):
+def daily_tops(date, tops=0, ai_type=''):
     if date == '' or date is None:
         if ai_type == '':
             url = 'https://www.pixiv.net/ranking.php'
@@ -20,7 +19,7 @@ def daily_tops(date, df, tops=0, ai_type=''):
         date = datetime.date.today().strftime('%Y%m%d')
     else:
         url = 'https://www.pixiv.net/ranking.php?mode=daily{ai_flag}&date={date}'\
-            .format(ai_flag=ai_type,date=date)
+            .format(ai_flag=ai_type, date=date)
 
     header = {"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
     request_site = Request(url, headers=header)
@@ -38,6 +37,8 @@ def daily_tops(date, df, tops=0, ai_type=''):
     print('\n----------------------------------------------------------------')
     print('current_date:', current_date, '\n')
 
+    column_names = dict(map(lambda x: (x, []), name_lst))
+    df = pd.DataFrame(column_names)
     i = 0
     for sec in rank_tbl.find_all('section'):
         rank = str(sec['data-rank'])
@@ -55,32 +56,28 @@ def daily_tops(date, df, tops=0, ai_type=''):
         i += 1
         if 0 < tops <= i:
             break
-    return df, current_date
+    DAO.sav2csv(df)
+    return current_date
 
 
 def days_crawl(tops=50, ai_type=''):
-    column_names = dict(map(lambda x: (x, []), name_lst))
-    df = pd.DataFrame(column_names)
-
     end_date = datetime.date(2022, 10, 31)
     delta = datetime.timedelta(days=1)
 
-    df, date_rec = daily_tops('', df, tops,ai_type)
+    date_rec = daily_tops('', tops, ai_type)
     pattern = re.compile(r'(\d+)年(\d+)月(\d+)日')
     match = pattern.search(date_rec)
     url_date = datetime.date(int(match.group(1)),
                              int(match.group(2)),
                              int(match.group(3))) - delta
+    # url_date = datetime.date(2022, 10, 31)  # start_date for test
 
     while url_date >= end_date:
         predate = url_date.strftime('%Y%m%d')
-        df, date_rec = daily_tops(predate, df, tops, ai_type)
+        daily_tops(predate, tops, ai_type)
         url_date -= delta
-        DAO.sav2csv(df)
 
 
 if __name__ == '__main__':
     days_crawl(tops=50)
-    # daily_tops('20230426',
-    #            pd.DataFrame(dict(map(lambda x: (x, []), name_lst))),
-    #            tops=1, ai_type='_ai')
+    # daily_tops('20230426', tops=1, ai_type='_ai')

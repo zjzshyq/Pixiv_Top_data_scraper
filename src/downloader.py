@@ -10,16 +10,16 @@ def download_cover(url, pic_name, rec_date):
     try:
         os.mkdir(fold_dir)
     except FileExistsError:
-        print(FileExistsError)
+        return FileExistsError
 
     img_response = requests.get(url, headers={'Referer': 'https://www.pixiv.net/'}, stream=True)
     if img_response.status_code == 200:
         with open(file_dir, 'wb') as file:
             for chunk in img_response.iter_content(1024):
                 file.write(chunk)
-        print(pic_name+" downloaded successfully.")
+        return pic_name+" downloaded successfully."
     else:
-        print("Failed to load "+pic_name)
+        return "Failed to load "+pic_name
 
 
 if __name__ == '__main__':
@@ -29,9 +29,9 @@ if __name__ == '__main__':
         info_str = dao.img_queue_pop()
         if info_str is None:
             break
-        print(info_str)
         splits = info_str.split(';')
         pname = splits[1]+"_"+splits[0]
         pdate = splits[2]
         img_url = splits[3]
-        download_cover(img_url, pname, pdate)
+        res = download_cover(img_url, pname, pdate)
+        print(res)

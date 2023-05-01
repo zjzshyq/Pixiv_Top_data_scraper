@@ -160,10 +160,3 @@ class Page(object):
             self.dao.sqlite.close()
         else:
             print('can\'t insert data in sqlite3')
-
-
-if __name__ == '__main__':
-    url = 'https://www.pixiv.net/artworks/102345178'
-    page = Page(url, '2022-10-31', 1, '')
-    page.parse(page.get_soup())
-    page.results(False)
