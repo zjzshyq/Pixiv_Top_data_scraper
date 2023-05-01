@@ -9,11 +9,16 @@ import pandas as pd
 import warnings
 
 
-# AI生成从31/10/2022开始
+# AI生成从20221031开始
 class Crawler(object):
     def __init__(self, tops, is_ai):
         self.is_ai = is_ai
         self.tops = tops
+        self.end_date = datetime.date(2022, 10, 31)
+
+    def set_end_date(self, date):
+        datetime_obj = datetime.datetime.strptime(date, '%Y%m%d')
+        self.end_date = datetime_obj.date()
 
     def daily_tops(self, date):
         if date == '' or date is None:
@@ -64,19 +69,20 @@ class Crawler(object):
         DAO.sav2csv(df, self.is_ai)
         return current_date
 
-    def days_crawl(self):
-        end_date = datetime.date(2022, 10, 31)
+    def days_crawl(self, begin_date=''):
         delta = datetime.timedelta(days=1)
+        if begin_date == '':
+            date_rec = self.daily_tops(date='')
+            pattern = re.compile(r'(\d+)年(\d+)月(\d+)日')
+            match = pattern.search(date_rec)
+            url_date = datetime.date(int(match.group(1)),
+                                     int(match.group(2)),
+                                     int(match.group(3))) - delta
+        else:
+            datetime_obj = datetime.datetime.strptime(begin_date, '%Y%m%d')
+            url_date = datetime_obj.date()
 
-        date_rec = self.daily_tops(date='')
-        pattern = re.compile(r'(\d+)年(\d+)月(\d+)日')
-        match = pattern.search(date_rec)
-        url_date = datetime.date(int(match.group(1)),
-                                 int(match.group(2)),
-                                 int(match.group(3))) - delta
-        # url_date = datetime.date(2022, 10, 31)  # start_date for test
-
-        while url_date >= end_date:
+        while url_date >= self.end_date:
             predate = url_date.strftime('%Y%m%d')
             self.daily_tops(predate)
             url_date -= delta
