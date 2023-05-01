@@ -138,7 +138,7 @@ class Page(object):
             self.dict_page['bookmarks'] = -1
             print(e)
 
-    def results(self, db=False):
+    def results(self, db=False, is_ai=False):
         print('Date:', self.dict_page['date'],
               '\nRank:', self.dict_page['rank'],
               '\nURL:', self.url)
@@ -150,7 +150,8 @@ class Page(object):
                 self.dao.img_queue_push(self.page_id,
                                         self.dict_page['rank'],
                                         self.dict_page['date'],
-                                        self.dict_page['img'])
+                                        self.dict_page['img'],
+                                        is_ai=is_ai)
 
         else:
             print('can\'t push data in redis with disconnection')

@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from crawler import Crawler
 
 
 try:
@@ -13,3 +14,7 @@ cursor = conn.cursor()
 cursor.execute('SELECT SQLITE_VERSION()')
 data = cursor.fetchone()
 print("SQLite version:", data[0])
+
+crawl = Crawler(tops=50, is_ai=False)
+crawl.days_crawl()
+# crawl.daily_tops('20230426')

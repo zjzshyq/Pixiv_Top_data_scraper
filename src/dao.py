@@ -111,13 +111,16 @@ class DAO(object):
     def delete(self, key):
         self.rd.delete(key)
 
-    def img_queue_push(self, pid, rank, date, img_url, lname='img'):
+    def img_queue_push(self, pid, rank, date, img_url, lname='img', is_ai=False):
         if self.redis_server_flag:
             if int(rank) < 10:
                 rank = '0'+str(rank)
             else:
                 rank = str(rank)
-            val = ';'.join([pid, rank, date, img_url])
+            if not is_ai:
+                val = ';'.join([pid, rank, date, img_url])
+            else:
+                val = ';'.join([pid, rank, date, img_url, 'ai'])
             self.rd.lpush(lname, val)
         else:
             print()
@@ -134,12 +137,11 @@ class DAO(object):
             return None
 
     @staticmethod
-    def sav2csv(df: pd.DataFrame):
+    def sav2csv(df: pd.DataFrame, ai=False):
         print(df.head())
-        csv_dir = '../data/tops.csv'
+        if not ai:
+            csv_dir = '../data/tops.csv'
+        else:
+            csv_dir = '../data/tops_ai.csv'
         header_flag = not os.path.isfile(csv_dir)
         df.to_csv(csv_dir, index=False, header=header_flag, mode='a')
-
-
-if __name__ == '__main__':
-    dao = DAO()
