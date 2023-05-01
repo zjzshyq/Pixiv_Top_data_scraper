@@ -7,7 +7,7 @@ try:
     os.mkdir('../data')
     os.mkdir('../covers')
 except FileExistsError:
-    print(FileExistsError)
+    print('files already exist.')
 
 conn = sqlite3.connect(database='../data/pixiv.db')
 cursor = conn.cursor()
