@@ -9,7 +9,6 @@ import pandas as pd
 import warnings
 
 
-# AI生成从20221031开始
 class Crawler(object):
     def __init__(self, tops: int, is_ai: bool):
         self.is_ai = is_ai
