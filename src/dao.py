@@ -3,12 +3,13 @@ import sqlite3
 import pandas as pd
 import datetime
 import os
+import conf
 
 
 class DAO(object):
-    def __init__(self, db=0):
+    def __init__(self):
         try:
-            self.rd = redis.Redis(host='localhost', port=6379, db=db)
+            self.rd = redis.Redis(host=conf.redis_host, port=6379, db=conf.redis_db)
             self.rd.set('opt_date', str(datetime.date.today()))
             self.redis_server_flag = True
         except redis.exceptions.ConnectionError:
@@ -16,7 +17,7 @@ class DAO(object):
             self.redis_server_flag = False
             print('redis server is off.')
         try:
-            self.sqlite = sqlite3.connect(database='../data/pixiv.db')
+            self.sqlite = sqlite3.connect(database=os.path.join(conf.proj_dir, 'pixiv.db'))
             self.create_tbl()
             self.sqlite_server_flag = True
         except sqlite3.OperationalError:
@@ -139,9 +140,10 @@ class DAO(object):
     @staticmethod
     def sav2csv(df: pd.DataFrame, ai=False):
         print(df.head())
+        data_dir = os.path.join(conf.proj_dir, 'data')
         if not ai:
-            csv_dir = '../data/tops.csv'
+            csv_dir = os.path.join(data_dir, 'tops.csv')
         else:
-            csv_dir = '../data/tops_ai.csv'
+            csv_dir = os.path.join(data_dir, 'tops_ai.csv')
         header_flag = not os.path.isfile(csv_dir)
         df.to_csv(csv_dir, index=False, header=header_flag, mode='a')

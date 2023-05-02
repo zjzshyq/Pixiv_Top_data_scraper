@@ -1,12 +1,14 @@
 import requests
 import os
+import conf
 from dao import DAO
 
 
 def download_cover(url, pic_name, rec_date):
     pic_name = pic_name+'.jpg'
     year_date = rec_date[:-2]
-    fold_dir_month = os.path.join('../covers',year_date)
+    cover_dir = os.path.join(conf.proj_dir, 'covers')
+    fold_dir_month = os.path.join(cover_dir,year_date)
     fold_dir_day = os.path.join(fold_dir_month, rec_date)
     file_dir = os.path.join(fold_dir_day, pic_name)
     try:

@@ -1,19 +1,20 @@
 import sqlite3
 import os
+import conf
 from crawler import Crawler
 
 
 try:
-    os.mkdir('../data')
-    os.mkdir('../covers')
+    os.mkdir(os.path.join(conf.proj_dir, 'data'))
+    os.mkdir(os.path.join(conf.proj_dir, 'cover'))
 except FileExistsError:
     print('files already exist.')
 
-conn = sqlite3.connect(database='../data/pixiv.db')
+conn = sqlite3.connect(database=os.path.join(conf.proj_dir, 'pixiv.db'))
 cursor = conn.cursor()
 cursor.execute('SELECT SQLITE_VERSION()')
 data = cursor.fetchone()
 print("SQLite version:", data[0])
 
-crawl = Crawler(tops=50, is_ai=True)
+crawl = Crawler(tops=conf.tops, is_ai=conf.is_ai)
 crawl.days_crawl()
