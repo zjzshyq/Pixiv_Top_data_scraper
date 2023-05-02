@@ -93,7 +93,7 @@ class Page(object):
             print(e)
 
         try:
-            self.dict_page['aiType'] = str(info['aiType'])  # 1非ai，2ai
+            self.dict_page['aiType'] = str(info['aiType'])  # 0被认证的原创作品，1非ai，2ai
         except Exception as e:
             self.dict_page['aiType'] = ''
             print(e)
