@@ -10,7 +10,8 @@ try:
 except FileExistsError:
     print('files already exist.')
 
-conn = sqlite3.connect(database=os.path.join(conf.proj_dir, 'pixiv.db'))
+data_dir = os.path.join(conf.proj_dir, 'data')
+conn = sqlite3.connect(database=os.path.join(data_dir, 'pixiv.db'))
 cursor = conn.cursor()
 cursor.execute('SELECT SQLITE_VERSION()')
 data = cursor.fetchone()

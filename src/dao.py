@@ -17,7 +17,8 @@ class DAO(object):
             self.redis_server_flag = False
             print('redis server is off.')
         try:
-            self.sqlite = sqlite3.connect(database=os.path.join(conf.proj_dir, 'pixiv.db'))
+            data_dir = os.path.join(conf.proj_dir, 'data')
+            self.sqlite = sqlite3.connect(database=os.path.join(data_dir, 'pixiv.db'))
             self.create_tbl()
             self.sqlite_server_flag = True
         except sqlite3.OperationalError:
