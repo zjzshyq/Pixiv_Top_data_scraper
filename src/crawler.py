@@ -11,7 +11,7 @@ import warnings
 
 # AI生成从20221031开始
 class Crawler(object):
-    def __init__(self, tops, is_ai):
+    def __init__(self, tops: int, is_ai: bool):
         self.is_ai = is_ai
         self.tops = tops
         self.end_date = datetime.date(2022, 10, 31)

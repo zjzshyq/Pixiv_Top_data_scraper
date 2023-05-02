@@ -92,7 +92,7 @@ class DAO(object):
             print("Insert failed.")
         cursor.close()
 
-    def drop_tbl(self, tbl='pixiv_tops'):
+    def __drop_tbl(self, tbl='pixiv_tops'):
         sql = """
             DROP TABLE {tbl}
         """.format(tbl=tbl)
@@ -100,16 +100,16 @@ class DAO(object):
         cursor.execute(sql)
         cursor.close()
 
-    def info2rd(self, pid, page_dict):
+    def __info2rd(self, pid: str, page_dict: dict):
         dict_drop_none = {}
         for k in page_dict:
             dict_drop_none[k] = '' if page_dict[k] is None else page_dict[k]
         self.rd.hmset(pid, dict_drop_none)
 
-    def img2rd(self, pid, date, img_url):
+    def __img2rd(self, pid, date, img_url):
         self.rd.set(pid+'_'+date, img_url)
 
-    def delete(self, key):
+    def __delete(self, key):
         self.rd.delete(key)
 
     def img_queue_push(self, pid, rank, date, img_url, lname='img', is_ai=False):
