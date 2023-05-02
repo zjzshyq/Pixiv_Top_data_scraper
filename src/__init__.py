@@ -10,12 +10,15 @@ try:
 except FileExistsError:
     print('files already exist.')
 
-data_dir = os.path.join(conf.proj_dir, 'data')
-conn = sqlite3.connect(database=os.path.join(data_dir, 'pixiv.db'))
-cursor = conn.cursor()
-cursor.execute('SELECT SQLITE_VERSION()')
-data = cursor.fetchone()
-print("SQLite version:", data[0])
+try:
+    data_dir = os.path.join(conf.proj_dir, 'data')
+    conn = sqlite3.connect(database=os.path.join(data_dir, 'pixiv.db'))
+    cursor = conn.cursor()
+    cursor.execute('SELECT SQLITE_VERSION()')
+    data = cursor.fetchone()
+    print("SQLite version:", data[0])
+except:
+    print('sqlite3 is not on.')
 
 crawl = Crawler(tops=conf.tops, is_ai=conf.is_ai)
 crawl.set_date(conf.begin_date, conf.end_date)
