@@ -15,10 +15,15 @@ class Crawler(object):
         self.is_ai = is_ai
         self.tops = tops
         self.end_date = datetime.date(2022, 10, 31)
+        self.begin_date = ''
 
-    def set_end_date(self, date):
-        datetime_obj = datetime.datetime.strptime(date, '%Y%m%d')
-        self.end_date = datetime_obj.date()
+    def set_date(self, begin_date='', end_date=''):
+        if begin_date != '':
+            datetime_obj = datetime.datetime.strptime(begin_date, '%Y%m%d')
+            self.begin_date = datetime_obj.date()
+        if end_date != '':
+            datetime_obj = datetime.datetime.strptime(end_date, '%Y%m%d')
+            self.end_date = datetime_obj.date()
 
     def daily_tops(self, date):
         if date == '' or date is None:
@@ -81,9 +86,9 @@ class Crawler(object):
         DAO.sav2csv(df, self.is_ai)
         return current_date
 
-    def days_crawl(self, begin_date=''):
+    def days_crawl(self):
         delta = datetime.timedelta(days=1)
-        if begin_date == '':
+        if self.begin_date == '':
             date_rec = self.daily_tops(date='')
             pattern = re.compile(r'(\d+)年(\d+)月(\d+)日')
             match = pattern.search(date_rec)
@@ -91,7 +96,7 @@ class Crawler(object):
                                      int(match.group(2)),
                                      int(match.group(3))) - delta
         else:
-            datetime_obj = datetime.datetime.strptime(begin_date, '%Y%m%d')
+            datetime_obj = datetime.datetime.strptime(self.begin_date, '%Y%m%d')
             url_date = datetime_obj.date()
 
         while url_date >= self.end_date:
