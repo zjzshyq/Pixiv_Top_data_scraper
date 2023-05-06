@@ -17,7 +17,7 @@ try:
     cursor.execute('SELECT SQLITE_VERSION()')
     data = cursor.fetchone()
     print("SQLite version:", data[0])
-except:
+except sqlite3.OperationalError:
     print('sqlite3 is not on.')
 
 crawl = Crawler(tops=conf.tops, is_ai=conf.is_ai)
