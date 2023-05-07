@@ -95,8 +95,7 @@ class Crawler(object):
                                      int(match.group(2)),
                                      int(match.group(3))) - delta
         else:
-            datetime_obj = datetime.datetime.strptime(self.begin_date, '%Y%m%d')
-            url_date = datetime_obj.date()
+            url_date = self.begin_date
 
         while url_date >= self.end_date:
             predate = url_date.strftime('%Y%m%d')
