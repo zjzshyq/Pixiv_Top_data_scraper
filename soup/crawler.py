@@ -27,7 +27,7 @@ class Crawler(object):
     def daily_tops(self, date):
         if date == '' or date is None:
             if not self.is_ai:
-                url = 'https://www.pixiv.net/ranking.php'
+                url = 'sranking.php'
             else:
                 url = 'https://www.pixiv.net/ranking.php?mode=daily_ai'
         else:
