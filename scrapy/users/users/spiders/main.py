@@ -24,5 +24,3 @@ class MainSpider(scrapy.Spider):
     def parse(self, response):
         html = request.urlopen(response.url)
         bs = BeautifulSoup(html.read(), 'html.parser')
-
-
