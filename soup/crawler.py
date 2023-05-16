@@ -27,7 +27,7 @@ class Crawler(object):
     def daily_tops(self, date):
         if date == '' or date is None:
             if not self.is_ai:
-                url = 'sranking.php'
+                url = 'https://www.pixiv.net/ranking.php'
             else:
                 url = 'https://www.pixiv.net/ranking.php?mode=daily_ai'
         else:
@@ -35,6 +35,7 @@ class Crawler(object):
                 .format(ai_flag='_ai' if self.is_ai else '', date=date)
 
         header = {"User-Agent": "Mozilla/5.0", 'Content-type': "text/html"}
+        print(url)
         request_site = Request(url, headers=header)
         webpage = urlopen(request_site)
         bs = BeautifulSoup(webpage.read(), 'html.parser')
