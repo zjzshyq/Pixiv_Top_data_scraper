@@ -4,8 +4,11 @@ from urllib.request import Request, urlopen
 from dao import DAO
 import datetime
 import pytz
+import chardet
+import ftfy
 import json
 import re
+
 
 name_lst_outside = ['pid', 'date', 'rank', 'img',  'crawl_time']  # str
 name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags',
@@ -63,7 +66,7 @@ class Page(object):
             print(e)
 
         try:
-            self.dict_page['title'] = info['title']
+            self.dict_page['title'] = ftfy.fix_text(info['title'])
         except Exception as e:
             self.dict_page['title'] = ''
             print(e)
@@ -75,7 +78,7 @@ class Page(object):
             print(e)
 
         try:
-            self.dict_page['uname'] = info['userName']
+            self.dict_page['uname'] = ftfy.fix_text(info['userName'])
         except Exception as e:
             self.dict_page['uname'] = ''
             print(e)
@@ -100,6 +103,7 @@ class Page(object):
 
         try:
             self.dict_page['tags'] = '/'.join(info['tags']) if info['tags'] is not None else ''
+            self.dict_page['tags'] = ftfy.fix_text(self.dict_page['tags'])
         except Exception as e:
             self.dict_page['tags'] = ''
             print(e)
@@ -109,7 +113,7 @@ class Page(object):
             desc = info['description']
             for s in re.findall(pattern, desc):
                 desc = desc.replace(s, '')
-            self.dict_page['desc'] = desc
+            self.dict_page['desc'] = ftfy.fix_text(desc)
         except Exception as e:
             self.dict_page['desc'] = ''
             print(e)
