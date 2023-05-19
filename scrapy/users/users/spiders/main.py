@@ -1,26 +1,30 @@
 import scrapy
-import pandas as pd
 from urllib import request
 from bs4 import BeautifulSoup
 
 
-class User(scrapy.Item):
-    uid = scrapy.Field()
-    uname = scrapy.Field()
-    followers = scrapy.Field()
-    illustrations = scrapy.Field()
-    gender = scrapy.Field()
-    birth = scrapy.Field()
+class Link(scrapy.Item):
+    link = scrapy.Field()
 
 
 class MainSpider(scrapy.Spider):
     name = "main"
     allowed_domains = ["www.pixiv.net"]
-
-    df = pd.read_csv('../../../../data/tops.csv')
-    uids = df['uid'].unique()
-    start_urls = list(map(lambda x: 'https://www.pixiv.net/en/users/' + str(x), uids))
+    start_urls = ['https://www.pixiv.net/ranking.php?mode=daily_ai']
 
     def parse(self, response):
-        html = request.urlopen(response.url)
-        bs = BeautifulSoup(html.read(), 'html.parser')
+        header = {"User-Agent": 'Mozilla/5.0', 'Content-type': "text/html"}
+        webpage = request.urlopen(request.Request(response.url, headers=header))
+        # webpage = request.urlopen(response.url)
+        bs = BeautifulSoup(webpage.read(), 'html.parser')
+        work_url = 'https://www.pixiv.net/artworks/'
+        rank_tbl = bs.find('div', {'class': 'ranking-items adjust'})
+
+        for sec in rank_tbl.find_all('section'):
+            page_url = Link()
+            try:
+                page_url['link'] = work_url + sec['data-id']
+            except Exception as e:
+                page_url['link'] = None
+                print(e)
+            yield page_url

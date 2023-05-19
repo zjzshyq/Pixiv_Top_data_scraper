@@ -4,7 +4,6 @@ from urllib.request import Request, urlopen
 from dao import DAO
 import datetime
 import pytz
-import chardet
 import ftfy
 import json
 import re
