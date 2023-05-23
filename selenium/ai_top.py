@@ -48,12 +48,13 @@ while current_date >= end_date:
 page_dict_lst = []
 top_links = ['https://www.pixiv.net/artworks/108297847', 'https://www.pixiv.net/en/artworks/108318799']
 for link in top_links:
+    time.sleep(2)
     dict_page = {}
-    driver.get(link)
     is_dynamic = False
+
+    driver.get(link)
     soup = BeautifulSoup(driver.page_source, 'html.parser')
 
-    print(link)
     page_id = link.split('/')[-1]
     dict_page['pid'] = page_id
 
@@ -79,6 +80,7 @@ for link in top_links:
 
     # for dynamic
     if is_dynamic:
+        print(link)
         fig_caption = soup.find('figcaption')
         print('浏览量', fig_caption.find('dd', {'title': '浏览量'}).text)
         print('赞！', fig_caption.find('dd', {'title': '赞！'}).text)
@@ -207,6 +209,5 @@ for link in top_links:
             dict_page['bookmarks'] = -1
             print(e)
     page_dict_lst.append(dict_page)
-    time.sleep(2)
 
 pd.DataFrame.from_records(page_dict_lst).to_csv('./data.csv', index=False)
