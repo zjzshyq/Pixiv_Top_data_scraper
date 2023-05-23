@@ -74,6 +74,8 @@ for link in top_links:
             is_dynamic = True
     except Exception as e:
         print('meta', e)
+        is_dynamic = True
+        js = None
 
     if is_dynamic:
         fig_caption = soup.find('figcaption')
