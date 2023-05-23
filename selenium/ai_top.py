@@ -77,13 +77,42 @@ for link in top_links:
         is_dynamic = True
         js = None
 
+    # for dynamic
     if is_dynamic:
         fig_caption = soup.find('figcaption')
-        print('title', fig_caption.find_all('h1')[0].text)
         print('浏览量', fig_caption.find('dd', {'title': '浏览量'}).text)
         print('赞！', fig_caption.find('dd', {'title': '赞！'}).text)
         print('收藏', fig_caption.find('dd', {'title': '收藏'}).text)
 
+        try:
+            txt = fig_caption.find_all('h1')[0].text
+            dict_page['title'] = ftfy.fix_text(txt)
+        except Exception as e:
+            dict_page['title'] = ''
+            print(e)
+
+        try:
+            txt = fig_caption.find('dd', {'title': '赞！'}).text
+            dict_page['likes'] = int(txt.replace(',', ''))
+        except Exception as e:
+            dict_page['likes'] = -1
+            print(e)
+
+        try:
+            txt = fig_caption.find('dd', {'title': '收藏'}).text
+            dict_page['bookmarks'] = int(txt.replace(',', ''))
+        except Exception as e:
+            dict_page['bookmarks'] = -1
+            print(e)
+
+        try:
+            txt = fig_caption.find('dd', {'title': '浏览量'}).text
+            dict_page['views'] = int(txt.replace(',', ''))
+        except Exception as e:
+            dict_page['views'] = -1
+            print(e)
+
+    # for static
     else:
         try:
             illust = js['illust'][page_id]
