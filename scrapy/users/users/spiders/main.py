@@ -1,6 +1,7 @@
 import scrapy
 from urllib import request
 from bs4 import BeautifulSoup
+import datetime
 
 
 class Link(scrapy.Item):
@@ -9,8 +10,20 @@ class Link(scrapy.Item):
 
 class MainSpider(scrapy.Spider):
     name = "main"
+    end_date = '20230522'
+    is_ai = True
     allowed_domains = ["www.pixiv.net"]
-    start_urls = ['https://www.pixiv.net/ranking.php?mode=daily_ai']
+
+    end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
+    current_date = datetime.datetime.now()
+    delta = datetime.timedelta(days=1)
+    start_urls = []
+    while current_date >= end_date:
+        current_date -= delta
+
+        url = 'https://www.pixiv.net/ranking.php?mode=daily{ai_flag}&date={date}' \
+            .format(ai_flag='_ai' if is_ai else '', date=current_date.strftime('%Y%m%d'))
+        start_urls.append(url)
 
     def parse(self, response):
         header = {"User-Agent": 'Mozilla/5.0', 'Content-type': "text/html"}

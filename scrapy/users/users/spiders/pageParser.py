@@ -48,7 +48,7 @@ class PageparserSpider(scrapy.Spider):
         crawl_time_str = now_tz.strftime('%Y-%m-%dT%H:%M:%S%z')
         dict_page['crawl_time'] = crawl_time_str
 
-        current_date = datetime.now()
+        current_date = datetime.datetime.now()
         previous_date = current_date - timedelta(days=1)
         previous_date_str = previous_date.strftime('%Y%m%d')
         dict_page['date'] = previous_date_str
