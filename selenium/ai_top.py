@@ -68,6 +68,7 @@ for link in top_links:
     previous_date = current_date - datetime.timedelta(days=1)
     previous_date_str = previous_date.strftime('%Y%m%d')
     dict_page['date'] = previous_date_str
+    dict_page['aiType'] = '2'
 
     try:
         js = json.loads(soup.find_all('meta')[-1]['content'])
@@ -87,26 +88,60 @@ for link in top_links:
         print('收藏', fig_caption.find('dd', {'title': '收藏'}).text)
 
         try:
-            txt = fig_caption.find_all('h1')[0].text
+            title_h1 = fig_caption.find_all('h1')[0]
+            txt = title_h1.text
             dict_page['title'] = ftfy.fix_text(txt)
         except Exception as e:
             dict_page['title'] = ''
-            print(e)
+            print('title',e)
 
+        try:
+            desc = ''
+            dict_page['desc'] = ftfy.fix_text(desc)
+        except Exception as e:
+            dict_page['desc'] = ''
+            print('desc', e)
+
+        try:
+            time_str = fig_caption.find('div', {'title': '投稿时间'}).text
+            time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日上午%H点%M分")
+            target_timezone = pytz.timezone("Asia/Tokyo")
+            target_format = "%Y-%m-%dT%H:%M:%S%z"
+            create_time = time_obj.astimezone(target_timezone).strftime(target_format)
+
+            dict_page['create_time'] = create_time
+            dict_page['update_time'] = create_time
+        except Exception as e:
+            dict_page['create_time'] = ''
+            dict_page['update_time'] = ''
+            print('create_time', e)
+
+        # tags
+        try:
+            tag_lst = []
+            li_lst = fig_caption.find('footer').find_all('li')
+            for li in li_lst[1:]:
+                tag = ftfy.fix_text(li.find('a').text)
+                if tag:
+                    tag_lst.append(tag)
+            dict_page['tags'] = '/'.join(tag_lst)
+        except Exception as e:
+            dict_page['tags'] = -1
+            print('tags', e)
+
+        dict_page['comments'] = 0
         try:
             txt = fig_caption.find('dd', {'title': '赞！'}).text
             dict_page['likes'] = int(txt.replace(',', ''))
         except Exception as e:
             dict_page['likes'] = -1
-            print(e)
-
+            print('likes',e)
         try:
             txt = fig_caption.find('dd', {'title': '收藏'}).text
             dict_page['bookmarks'] = int(txt.replace(',', ''))
         except Exception as e:
             dict_page['bookmarks'] = -1
             print(e)
-
         try:
             txt = fig_caption.find('dd', {'title': '浏览量'}).text
             dict_page['views'] = int(txt.replace(',', ''))
@@ -160,12 +195,6 @@ for link in top_links:
             dict_page['update_time'] = info['updateDate']
         except Exception as e:
             dict_page['update_time'] = ''
-            print(e)
-
-        try:
-            dict_page['aiType'] = str(info['aiType'])  # 0被认证的原创作品，1非ai，2ai
-        except Exception as e:
-            dict_page['aiType'] = ''
             print(e)
 
         try:
