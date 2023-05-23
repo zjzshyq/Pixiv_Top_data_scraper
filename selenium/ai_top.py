@@ -102,7 +102,7 @@ for link in top_links:
             dict_page['title'] = ftfy.fix_text(txt)
         except Exception as e:
             dict_page['title'] = ''
-            print('title',e)
+            print('title', e)
 
         try:
             desc = ''
@@ -144,7 +144,7 @@ for link in top_links:
             dict_page['likes'] = int(txt.replace(',', ''))
         except Exception as e:
             dict_page['likes'] = -1
-            print('likes',e)
+            print('likes', e)
         try:
             txt = fig_caption.find('dd', {'title': '收藏'}).text
             dict_page['bookmarks'] = int(txt.replace(',', ''))
