@@ -19,8 +19,9 @@ driver = webdriver.Chrome()
 end_date = '20230522'
 is_ai = True
 end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
-current_date = datetime.datetime.now()
 delta = datetime.timedelta(days=1)
+current_date = datetime.datetime.now()
+current_date -= delta
 start_urls = []
 while current_date >= end_date:
     current_date -= delta
@@ -29,24 +30,29 @@ while current_date >= end_date:
         .format(ai_flag='_ai' if is_ai else '', date=current_date.strftime('%Y%m%d'))
     start_urls.append(url)
 
-# top_links = []
-# work_url = 'https://www.pixiv.net/artworks/'
-# for url in start_urls:
-#     driver.get(url)
-#     page_source = driver.page_source
-#     soup = BeautifulSoup(page_source, 'html.parser')
-#     rank_tbl = soup.find('div', {'class': 'ranking-items adjust'})
-#
-#     for sec in rank_tbl.find_all('section'):
-#         try:
-#             page_url = work_url + sec['data-id']
-#         except Exception as e:
-#             page_url = None
-#             print(e)
-#         top_links.append(page_url)
+top_links = []
+work_url = 'https://www.pixiv.net/artworks/'
+i = 0
+for url in start_urls:
+    driver.get(url)
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'html.parser')
+    rank_tbl = soup.find('div', {'class': 'ranking-items adjust'})
+
+    for sec in rank_tbl.find_all('section'):
+        try:
+            page_url = work_url + sec['data-id']
+        except Exception as e:
+            page_url = None
+            print(e)
+        top_links.append(page_url)
+
+        if i > 2:
+            break
+        i += 1
+    time.sleep(3)
 
 page_dict_lst = []
-top_links = ['https://www.pixiv.net/artworks/108297847', 'https://www.pixiv.net/en/artworks/108318799']
 for link in top_links:
     time.sleep(2)
     dict_page = {}
@@ -68,7 +74,10 @@ for link in top_links:
     previous_date = current_date - datetime.timedelta(days=1)
     previous_date_str = previous_date.strftime('%Y%m%d')
     dict_page['date'] = previous_date_str
-    dict_page['aiType'] = '2'
+    if is_ai:
+        dict_page['aiType'] = '2'
+    else:
+        dict_page['aiType'] = '1'
 
     try:
         js = json.loads(soup.find_all('meta')[-1]['content'])
