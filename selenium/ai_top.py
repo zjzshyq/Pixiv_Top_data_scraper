@@ -1,5 +1,3 @@
-import time
-
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -7,6 +5,7 @@ import datetime
 import ftfy
 import pytz
 import json
+import time
 import re
 
 name_lst_outside = ['pid', 'date', 'rank', 'img', 'crawl_time']  # str
@@ -47,10 +46,11 @@ while current_date >= end_date:
 #         top_links.append(page_url)
 
 page_dict_lst = []
-top_links = ['https://www.pixiv.net/artworks/108329185', 'https://www.pixiv.net/artworks/108297847']
+top_links = ['https://www.pixiv.net/artworks/108297847', 'https://www.pixiv.net/en/artworks/108318799']
 for link in top_links:
     dict_page = {}
     driver.get(link)
+    is_dynamic = False
     soup = BeautifulSoup(driver.page_source, 'html.parser')
 
     print(link)
@@ -70,100 +70,113 @@ for link in top_links:
 
     try:
         js = json.loads(soup.find_all('meta')[-1]['content'])
+        if type(js) != dict:
+            is_dynamic = True
     except Exception as e:
         print('meta', e)
         continue
 
-    try:
-        illust = js['illust'][page_id]
-    except Exception as e:
-        for n in name_lst_info:
-            dict_page[n] = ''
-        illust = None
-        print('illust', e)
+    if is_dynamic:
+        fig_caption = soup.find('figcaption')
+        print(fig_caption.find_all('h1')[0].text)
+        print('浏览量', fig_caption.find('dd', {'title': '浏览量'}).text)
+        print('赞！', fig_caption.find('dd', {'title': '赞！'}).text)
+        print('收藏', fig_caption.find('dd', {'title': '收藏'}).text)
 
-    try:
-        info = illust['userIllusts'][page_id]
-    except Exception as e:
-        for n in name_lst_illust:
-            dict_page[n] = -1
-        info = None
-        print(e)
-    print(js)
-    print(illust)
-    print(soup.find_all('meta')[-1])
-    time.sleep(5)
+    else:
+        try:
+            illust = js['illust'][page_id]
+        except Exception as e:
+            for n in name_lst_info:
+                dict_page[n] = ''
+            illust = None
+            print(e)
 
-    try:
-        dict_page['uid'] = str(info['userId'])
-    except Exception as e:
-        dict_page['uid'] = ''
-        print('uid',e)
+        try:
+            info = illust['userIllusts'][page_id]
+        except Exception as e:
+            for n in name_lst_illust:
+                dict_page[n] = -1
+            info = None
+            print(e)
 
-    try:
-        dict_page['uname'] = ftfy.fix_text(info['userName'])
-    except Exception as e:
-        dict_page['uname'] = ''
-        print('uname',e)
+        try:
+            dict_page['title'] = ftfy.fix_text(info['title'])
+        except Exception as e:
+            dict_page['title'] = ''
+            print(e)
 
-    try:
-        dict_page['create_time'] = info['createDate']
-    except Exception as e:
-        dict_page['create_time'] = ''
-        print('create_time',e)
+        try:
+            dict_page['uid'] = str(info['userId'])
+        except Exception as e:
+            dict_page['uid'] = ''
+            print(e)
 
-    try:
-        dict_page['update_time'] = info['updateDate']
-    except Exception as e:
-        dict_page['update_time'] = ''
-        print('update_time',e)
+        try:
+            dict_page['uname'] = ftfy.fix_text(info['userName'])
+        except Exception as e:
+            dict_page['uname'] = ''
+            print(e)
 
-    try:
-        dict_page['aiType'] = str(info['aiType'])  # 0被认证的原创作品，1非ai，2ai
-    except Exception as e:
-        dict_page['aiType'] = ''
-        print('aiType',e)
+        try:
+            dict_page['create_time'] = info['createDate']
+        except Exception as e:
+            dict_page['create_time'] = ''
+            print(e)
 
-    try:
-        dict_page['tags'] = '/'.join(info['tags']) if info['tags'] is not None else ''
-        dict_page['tags'] = ftfy.fix_text(dict_page['tags'])
-    except Exception as e:
-        dict_page['tags'] = ''
-        print('tags',e)
+        try:
+            dict_page['update_time'] = info['updateDate']
+        except Exception as e:
+            dict_page['update_time'] = ''
+            print(e)
 
-    try:
-        pattern = re.compile(r'<.+?>')
-        desc = info['description']
-        for s in re.findall(pattern, desc):
-            desc = desc.replace(s, '')
-        dict_page['desc'] = ftfy.fix_text(desc)
-    except Exception as e:
-        dict_page['desc'] = ''
-        print('desc',e)
+        try:
+            dict_page['aiType'] = str(info['aiType'])  # 0被认证的原创作品，1非ai，2ai
+        except Exception as e:
+            dict_page['aiType'] = ''
+            print(e)
 
-    try:
-        dict_page['views'] = int(illust['viewCount'])
-    except Exception as e:
-        dict_page['views'] = -1
-        print('views',e)
+        try:
+            dict_page['tags'] = '/'.join(info['tags']) if info['tags'] is not None else ''
+            dict_page['tags'] = ftfy.fix_text(dict_page['tags'])
+        except Exception as e:
+            dict_page['tags'] = ''
+            print(e)
 
-    try:
-        dict_page['comments'] = int(illust['commentCount'])
-    except Exception as e:
-        dict_page['views'] = -1
-        print('comments',e)
+        try:
+            pattern = re.compile(r'<.+?>')
+            desc = info['description']
+            for s in re.findall(pattern, desc):
+                desc = desc.replace(s, '')
+            dict_page['desc'] = ftfy.fix_text(desc)
+        except Exception as e:
+            dict_page['desc'] = ''
+            print(e)
 
-    try:
-        dict_page['likes'] = int(illust['likeCount'])
-    except Exception as e:
-        dict_page['likes'] = -1
-        print('likes',e)
+        try:
+            dict_page['views'] = int(illust['viewCount'])
+        except Exception as e:
+            dict_page['views'] = -1
+            print(e)
 
-    try:
-        dict_page['bookmarks'] = int(illust['bookmarkCount'])
-    except Exception as e:
-        dict_page['bookmarks'] = -1
-        print('bookmarks',e)
+        try:
+            dict_page['comments'] = int(illust['commentCount'])
+        except Exception as e:
+            dict_page['views'] = -1
+            print(e)
+
+        try:
+            dict_page['likes'] = int(illust['likeCount'])
+        except Exception as e:
+            dict_page['likes'] = -1
+            print(e)
+
+        try:
+            dict_page['bookmarks'] = int(illust['bookmarkCount'])
+        except Exception as e:
+            dict_page['bookmarks'] = -1
+            print(e)
     page_dict_lst.append(dict_page)
+    time.sleep(2)
 
-# pd.DataFrame.from_records(page_dict_lst).to_csv('./data.csv', index=False)
+pd.DataFrame.from_records(page_dict_lst).to_csv('./data.csv', index=False)
