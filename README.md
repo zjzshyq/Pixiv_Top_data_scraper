@@ -17,8 +17,8 @@ The whole process is below:
 ## Scrapy 
 The scripts are in the file of scrapy/users/users/spiders. 
 Using command line to run the script.
-1. Type command line: 'scrapy crawl main -O links.csv' to get the links
-2. Type command line: 'scrapy crawl pageParser -O links.csv' to get the data 
+1. Type command line: 'scrapy crawl main -O links.csv' to get the links.
+2. Type command line: 'scrapy crawl pageParser -O links.csv' to get the meta-data in pages. 
 
 ## Selenium
 The script is in the file of selenium. Running ai_top.py can get the data we need.
