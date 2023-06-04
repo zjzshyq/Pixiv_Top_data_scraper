@@ -15,10 +15,10 @@ The whole process is below:
 ![flow](data/paragram.png)
 
 ## Scrapy 
-The codes are in the file of scrapy/users/users/spiders. 
+The scripts are in the file of scrapy/users/users/spiders. 
 Using command line to run the script.
 1. Type command line: 'scrapy crawl main -O links.csv' to get the links
 2. Type command line: 'scrapy crawl pageParser -O links.csv' to get the data 
 
 ## Selenium
-The codes are in the file of selenium. And run the script of ai_top.py
+The script is in the file of selenium. Running ai_top.py can get the data we need.
