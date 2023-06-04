@@ -9,6 +9,7 @@ covers/
 
 # C extensions
 *.so
+*.pdf
 
 # Distribution / packaging
 .Python
