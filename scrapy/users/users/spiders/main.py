@@ -10,16 +10,35 @@ class Link(scrapy.Item):
 
 class MainSpider(scrapy.Spider):
     name = "main"
-    end_date = '20230604'
+    end_date = '20230603'
     is_ai = True
+    adjust_end_date = True  # Boolean parameter
+
     allowed_domains = ["www.pixiv.net"]
 
     end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
     current_date = datetime.datetime.now()
     delta = datetime.timedelta(days=1)
     start_urls = []
+
+    # Adjust the end_date based on the value of adjust_end_date
+    if adjust_end_date:
+        end_date = current_date - (2 * delta)
+
     while current_date >= end_date:
         current_date -= delta
+# class MainSpider(scrapy.Spider):
+#     name = "main"
+#     end_date = '20230604'
+#     is_ai = True
+#     allowed_domains = ["www.pixiv.net"]
+#
+#     end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
+#     current_date = datetime.datetime.now()
+#     delta = datetime.timedelta(days=1)
+#     start_urls = []
+#     while current_date >= end_date:
+#         current_date -= delta
 
         url = 'https://www.pixiv.net/ranking.php?mode=daily{ai_flag}&date={date}' \
             .format(ai_flag='_ai' if is_ai else '', date=current_date.strftime('%Y%m%d'))

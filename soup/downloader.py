@@ -7,6 +7,7 @@ from dao import DAO
 def download_cover(url, pic_name, rec_date):
     pic_name = pic_name+'.jpg'
     year_date = rec_date[:-2]
+
     cover_dir = os.path.join(conf.proj_dir, 'covers')
     fold_dir_month = os.path.join(cover_dir, year_date)
     fold_dir_day = os.path.join(fold_dir_month, rec_date)

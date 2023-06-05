@@ -2,7 +2,7 @@ import sqlite3
 import os
 import conf
 from crawler import Crawler
-
+from datetime import datetime, timedelta
 
 try:
     os.mkdir(os.path.join(conf.proj_dir, 'data'))
@@ -20,6 +20,20 @@ try:
 except sqlite3.OperationalError:
     print('sqlite3 is not on.')
 
-crawl = Crawler(tops=conf.tops, is_ai=conf.is_ai)
-crawl.set_date(conf.begin_date, conf.end_date)
+# a boolean parameter limiting the number of pages
+if conf.lmt100pages:
+    tops = 50
+    begin_date = ''
+
+    current_date = datetime.now()
+    previous_date = current_date - timedelta(days=2)
+    end_date = previous_date.strftime("%Y%m%d")
+else:
+    tops = conf.tops
+    begin_date = conf.begin_date
+    end_date = conf.end_date
+
+# start to crawl
+crawl = Crawler(tops=tops, is_ai=conf.is_ai)
+crawl.set_date(begin_date, end_date)
 crawl.days_crawl()
