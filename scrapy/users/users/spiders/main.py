@@ -10,7 +10,7 @@ class Link(scrapy.Item):
 
 class MainSpider(scrapy.Spider):
     name = "main"
-    end_date = '20230522'
+    end_date = '20230604'
     is_ai = True
     allowed_domains = ["www.pixiv.net"]
 

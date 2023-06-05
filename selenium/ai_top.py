@@ -16,7 +16,7 @@ name_lst = name_lst_outside + name_lst_info + name_lst_illust
 
 driver = webdriver.Chrome()
 
-end_date = '20230522'
+end_date = '20230603'
 is_ai = True
 end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
 delta = datetime.timedelta(days=1)
@@ -47,7 +47,7 @@ for url in start_urls:
             print(e)
         top_links.append(page_url)
 
-        if i > 2:
+        if i > 30:
             break
         i += 1
     time.sleep(3)
@@ -113,7 +113,7 @@ for link in top_links:
 
         try:
             time_str = fig_caption.find('div', {'title': '投稿时间'}).text
-            time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日上午%H点%M分")
+            time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日 %H点%M分")
             target_timezone = pytz.timezone("Asia/Tokyo")
             target_format = "%Y-%m-%dT%H:%M:%S%z"
             create_time = time_obj.astimezone(target_timezone).strftime(target_format)

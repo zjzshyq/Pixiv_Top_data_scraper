@@ -22,11 +22,10 @@ driver = webdriver.Chrome()
 # ser = Service(gecko_path)
 # options = webdriver.firefox.options.Options()
 # options.headless = False
-# #options.add_argument('-headless')
 # driver = webdriver.Firefox(options = options, service=ser)
-# options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0')  User-Agent
+# options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0')  # 自定义 User-Agent
 
-end_date = '20230603'
+end_date = '20230604'
 is_ai = True
 end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
 delta = datetime.timedelta(days=1)
@@ -57,7 +56,7 @@ for url in start_urls:
             print(e)
         top_links.append(page_url)
 
-        if i > 9:
+        if i > 30:
             break
         i += 1
     time.sleep(5)
@@ -105,6 +104,7 @@ for link in top_links:
         print('浏览量', fig_caption.find('dd', {'title': '浏览量'}).text)
         print('赞！', fig_caption.find('dd', {'title': '赞！'}).text)
         print('收藏', fig_caption.find('dd', {'title': '收藏'}).text)
+        #print('投稿时间', fig_caption.find('div', {'title': '投稿时间'}).text)
 
         try:
             title_h1 = fig_caption.find_all('h1')[0]
@@ -121,20 +121,24 @@ for link in top_links:
             dict_page['desc'] = ''
             print('desc', e)
 
+        # try:
+        #     time_str = fig_caption.find('div', {'title': '投稿时间'}).text
+        #     time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日[上午下午凌晨]%H点%M分")
+        #     target_timezone = pytz.timezone("Asia/Tokyo")
+        #     target_format = "%Y-%m-%dT%H:%M:%S%z"
+        #     create_time = time_obj.astimezone(target_timezone).strftime(target_format)
+        #
+        #     dict_page['create_time'] = create_time
+        #     dict_page['update_time'] = create_time
+        # except Exception as e:
+        #     dict_page['create_time'] = ''
+        #     dict_page['update_time'] = ''
+        #     print('create_time', e)
         try:
-            time_str = fig_caption.find('div', {'title': '投稿时间'}).text
-            time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日[上午下午凌晨]%H点%M分")
-            target_timezone = pytz.timezone("Asia/Tokyo")
-            target_format = "%Y-%m-%dT%H:%M:%S%z"
-            create_time = time_obj.astimezone(target_timezone).strftime(target_format)
-
-            dict_page['create_time'] = create_time
-            dict_page['update_time'] = create_time
+            dict_page['create_time'] = info['createDate']
         except Exception as e:
             dict_page['create_time'] = ''
-            dict_page['update_time'] = ''
-            print('create_time', e)
-
+            print(e)
         # tags
         try:
             tag_lst = []
@@ -205,6 +209,26 @@ for link in top_links:
                 dict_page[n] = ''
             illust = None
             print(e)
+        # try:
+        #     time_str = fig_caption.find('div', {'title': '投稿时间'}).text
+        #     time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日..%H点%M分")
+        #     target_timezone = pytz.timezone("Asia/Tokyo")
+        #     target_format = "%Y-%m-%dT%H:%M:%S%z"
+        #     create_time = time_obj.astimezone(target_timezone).strftime(target_format)
+        #
+        #     dict_page['create_time'] = create_time
+        #     dict_page['update_time'] = create_time
+        # except Exception as e:
+        #     dict_page['create_time'] = ''
+        #     dict_page['update_time'] = ''
+        #     print('create_time', e)
+
+        try:
+            dict_page['create_time'] = info['createDate']
+        except Exception as e:
+            dict_page['create_time'] = ''
+            print(e)
+
         try:
             info = illust['userIllusts'][page_id]
         except Exception as e:
@@ -218,6 +242,7 @@ for link in top_links:
         except Exception as e:
             dict_page['title'] = ''
             print(e)
+
 
         try:
             dict_page['title'] = ftfy.fix_text(info['title'])
