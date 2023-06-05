@@ -12,7 +12,7 @@ The whole process is below:
 6. downloader.py will get data from redis pipeline to download covers asynchronously.
 
 ### Flowchart
-![flow](data/paragram.png)
+![flow](flowchart.png)
 
 ## Scrapy 
 The scripts are in the file of scrapy/users/users/spiders. 

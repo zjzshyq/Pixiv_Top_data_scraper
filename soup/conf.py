@@ -5,3 +5,4 @@ tops = 50  # to control how many top pages per day you want to crawl
 is_ai = True  # to crawl pictures generate by AI or not
 redis_host = 'localhost'
 redis_db = 0
+
