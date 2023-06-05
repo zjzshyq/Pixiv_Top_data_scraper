@@ -23,4 +23,4 @@ Using command line to run the script.
 2. Type command line: 'scrapy crawl pageParser -O data.csv' to get the meta-data in pages. 
 
 ## Selenium
-The script is in the file of selenium. Running ai_top_hushuai.py can get the data we need.
+The script is in the file of selenium. Running ai_top_shuai.py can get the data we need.
