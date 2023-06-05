@@ -10,6 +10,8 @@ import re
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
+boolean_parameter = True
+
 name_lst_outside = ['pid', 'date', 'rank', 'img', 'crawl_time']  # str
 name_lst_info = ['title', 'uid', 'uname', 'aiType', 'tags',
                  'desc', 'create_time', 'update_time']  # all str
@@ -17,22 +19,24 @@ name_lst_illust = ['views', 'comments', 'likes', 'bookmarks']  # all int
 name_lst = name_lst_outside + name_lst_info + name_lst_illust
 
 
-driver = webdriver.Chrome()
-# gecko_path = '/opt/homebrew/bin/geckodriver'
-# ser = Service(gecko_path)
-# options = webdriver.firefox.options.Options()
-# options.headless = False
-# driver = webdriver.Firefox(options = options, service=ser)
-# options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0')  # 自定义 User-Agent
+#driver = webdriver.Chrome()
+gecko_path = '/opt/homebrew/bin/geckodriver'
+ser = Service(gecko_path)
+options = webdriver.firefox.options.Options()
+options.headless = False
+#options.add_argument('-headless')
+driver = webdriver.Firefox(options = options, service=ser)
+options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0')  # User-Agent
 
-end_date = '20230604'
+finish_date = datetime.datetime.now() - datetime.timedelta(days=3) # 3 days , each day includes 50 links , so it can make sure make at least 100 pages
+#end_date = '20230602'
 is_ai = True
-end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
+#end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
 delta = datetime.timedelta(days=1)
 current_date = datetime.datetime.now()
 current_date -= delta
 start_urls = []
-while current_date >= end_date:
+while current_date >= finish_date:#end_date
     current_date -= delta
 
     url = 'https://www.pixiv.net/ranking.php?mode=daily{ai_flag}&date={date}' \
@@ -54,16 +58,19 @@ for url in start_urls:
         except Exception as e:
             page_url = None
             print(e)
+        if i >= 100 : # useing boolean_parameter to make sure there is 100 links
+            boolean_parameter = False
+        if (boolean_parameter == False):
+            break
+
         top_links.append(page_url)
 
-        if i > 30:
-            break
         i += 1
     time.sleep(5)
 
 page_dict_lst = []
 for link in top_links:
-    time.sleep(2)
+    time.sleep(3)
     dict_page = {}
     is_dynamic = False
 
@@ -74,7 +81,7 @@ for link in top_links:
     dict_page['pid'] = page_id
 
     now = datetime.datetime.now()
-    tz = pytz.timezone('Asia/Tokyo')  # 转换为东京时区的时间
+    tz = pytz.timezone('Asia/Tokyo')  # change time
     now_tz = tz.localize(now)
     crawl_time_str = now_tz.strftime('%Y-%m-%dT%H:%M:%S%z')
     dict_page['crawl_time'] = crawl_time_str
@@ -104,7 +111,7 @@ for link in top_links:
         print('浏览量', fig_caption.find('dd', {'title': '浏览量'}).text)
         print('赞！', fig_caption.find('dd', {'title': '赞！'}).text)
         print('收藏', fig_caption.find('dd', {'title': '收藏'}).text)
-        #print('投稿时间', fig_caption.find('div', {'title': '投稿时间'}).text)
+
 
         try:
             title_h1 = fig_caption.find_all('h1')[0]
@@ -273,11 +280,11 @@ for link in top_links:
         except Exception as e:
             dict_page['update_time'] = ''
             print(e)
-        try: # 加进去的
-            dict_page['aiType'] = str(info['aiType'])  # 0被认证的原创作品，1非ai，2ai
+        try: # add
+            dict_page['aiType'] = str(info['aiType'])  # 0 certified original works, 1 non-ai, 2ai
         except Exception as e:
             dict_page['aiType'] = ''
-            print(e)# 加进去的
+            print(e)# add
         try:
             dict_page['tags'] = '/'.join(info['tags']) if info['tags'] is not None else ''
             dict_page['tags'] = ftfy.fix_text(dict_page['tags'])

@@ -1,5 +1,4 @@
 import os
-
 proj_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # project direction
 lmt100pages = True  # limit the number of pages in 100 regardless other parameters like tops, end_date.
 begin_date = ''  # empty means from today, otherwise use YYYYMMDD date format

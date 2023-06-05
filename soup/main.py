@@ -4,6 +4,7 @@ import conf
 from crawler import Crawler
 from datetime import datetime, timedelta
 
+# init the files
 try:
     os.mkdir(os.path.join(conf.proj_dir, 'data'))
     os.mkdir(os.path.join(conf.proj_dir, 'covers'))
