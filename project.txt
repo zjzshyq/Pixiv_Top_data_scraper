@@ -1,6 +1,7 @@
 repo: https://github.com/zjzshyq/Pixiv_Top_data_scraper
 video: https://drive.google.com/file/d/13qOlnb9Ra_cVwN3gkDh73ye67Li7Xfb4/view?usp=share_link
-pdf: google
+pdf: https://drive.google.com/file/d/176vrNRjhKNBwWN-8ZNGdTFB44ItpGXuC/view?usp=sharing
+
 Yiqing Hu 455858
 Jin Huang 404899
 Shuai Hu 454835
