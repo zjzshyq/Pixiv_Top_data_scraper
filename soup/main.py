@@ -25,11 +25,8 @@ except sqlite3.OperationalError:
 # a boolean parameter limiting the number of pages
 if conf.lmt100pages:
     tops = 50
-    begin_date = ''
-
-    current_date = datetime.now()
-    previous_date = current_date - timedelta(days=2)
-    end_date = previous_date.strftime("%Y%m%d")
+    begin_date = '20230605'
+    end_date = '20230604'
 else:
     tops = conf.tops
     begin_date = conf.begin_date

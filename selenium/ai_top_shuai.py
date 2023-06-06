@@ -9,7 +9,8 @@ import time
 import re
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
+
+start_time = time.time()
 boolean_parameter = True
 
 name_lst_outside = ['pid', 'date', 'rank', 'img', 'crawl_time']  # str
@@ -19,12 +20,11 @@ name_lst_illust = ['views', 'comments', 'likes', 'bookmarks']  # all int
 name_lst = name_lst_outside + name_lst_info + name_lst_illust
 
 
-#driver = webdriver.Chrome()
+# driver = webdriver.Chrome()
 gecko_path = '/opt/homebrew/bin/geckodriver'
 ser = Service(gecko_path)
 options = webdriver.firefox.options.Options()
 options.headless = False
-#options.add_argument('-headless')
 driver = webdriver.Firefox(options = options, service=ser)
 options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0')  # User-Agent
 
@@ -328,3 +328,4 @@ for link in top_links:
     page_dict_lst.append(dict_page)
 
 pd.DataFrame.from_records(page_dict_lst).to_csv('./data.csv', index=False)
+print('selenium cost:', time.time() - start_time)

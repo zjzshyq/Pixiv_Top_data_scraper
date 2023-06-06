@@ -10,20 +10,20 @@ class Link(scrapy.Item):
 
 class MainSpider(scrapy.Spider):
     name = "main"
-    end_date = '20230603'
+    end_date = '20230604'
     is_ai = True
     adjust_end_date = True  # Boolean parameter
 
     allowed_domains = ["www.pixiv.net"]
 
     end_date = datetime.datetime.strptime(end_date, '%Y%m%d')
-    current_date = datetime.datetime.now()
+    current_date = datetime.datetime.strptime("20230605", '%Y%m%d')
     delta = datetime.timedelta(days=1)
     start_urls = []
 
     # Adjust the end_date based on the value of adjust_end_date
     if adjust_end_date:
-        end_date = current_date - (2 * delta)
+        end_date = current_date - delta
 
     while current_date >= end_date:
         current_date -= delta
