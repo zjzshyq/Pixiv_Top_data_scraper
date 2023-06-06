@@ -3,6 +3,7 @@ import os
 import conf
 from crawler import Crawler
 from datetime import datetime, timedelta
+import time
 
 # init the files
 try:
@@ -35,6 +36,8 @@ else:
     end_date = conf.end_date
 
 # start to crawl
+start_time = time.time()
 crawl = Crawler(tops=tops, is_ai=conf.is_ai)
 crawl.set_date(begin_date, end_date)
 crawl.days_crawl()
+print('soup cost:', time.time() - start_time)
