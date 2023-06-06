@@ -2,7 +2,7 @@
 ## Soup
 ### Description
 The part of soup contains the full structure of this program. 
-crawler.py and crawler.py are the core files for this project. 
+crawler.py and pageParser.py are the core files for this project. 
 In conf.by, setting boolean parameter which is lmt100pages to limit the number of pages in 100.
 The codes are in the file of soup.
 The whole process is below:
